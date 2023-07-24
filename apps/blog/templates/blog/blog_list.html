@@ -1,0 +1,21 @@
+{% extends 'mailing_service/base.html' %}
+{% block content %}
+
+    <div class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        {% if user.is_authenticated %}
+                            <div class="d-flex justify-content-center">
+                                <a class="btn btn-primary" href="">Добавить</a>
+                            </div>
+                        {% endif %}
+                        <div class="card" style="text-align: center">1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
