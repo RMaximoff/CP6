@@ -22,6 +22,9 @@ class MailingMessageForm(FormMixin, forms.ModelForm):
 
 
 class MailingSettingsForm(FormMixin, forms.ModelForm):
+    clients = forms.ModelMultipleChoiceField(queryset=Client.objects.all(), widget=forms.CheckboxSelectMultiple,
+                                             label='Клиенты')
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['mailing_start_time'].widget = DateInput(attrs={'type': 'datetime-local'})

@@ -7,15 +7,17 @@
                 <th>Почта</th>
                 <th>Имя клиента</th>
                 <th>Комментарий</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
-            {% for log in client_list %}
+            {% for client in client_list %}
                 <tr>
-                    <td>{{ client_list. }}</td>
-                    <td>{{ log.client }}</td>
-                    <td>{{ log.server_response }}</td>
-                    <td>{{ log.status }}</td>
+                    <td>{{ client.email }}</td>
+                    <td>{{ client.full_name }}</td>
+                    <td>{{ client.comment }}</td>
+                    <td><a href="{% url 'mailing_service:client_del' client.pk %}" class="btn btn-primary">Удалить</a></td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>

@@ -72,6 +72,16 @@ class ClientListView(LoginRequiredMixin, ListView):
         return queryset
 
 
+class MailMessageListView(LoginRequiredMixin, ListView):
+    model = MailingMessage
+    template_name = 'mailing_service/mail_list.html'
+    context_object_name = 'mail_list'
+
+    def get_queryset(self):
+        queryset = MailingMessage.objects.filter(owner_id=self.request.user.pk)
+        return queryset
+
+
 class MailingLogListView(LoginRequiredMixin, ListView):
     model = MailingLog
     template_name = 'mailing_service/mailinglog_list.html'
@@ -83,24 +93,32 @@ class MailingLogListView(LoginRequiredMixin, ListView):
 
 class MailingUpdateView(LoginRequiredMixin, UpdateView):
     model = MailingSettings
-
-
-class ClientUpdateView(LoginRequiredMixin, UpdateView):
-    model = Client
-    form_class = ClientForm
+    form_class = MailingSettingsForm
+    success_url = reverse_lazy('mailing_service:cabinet')
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['filter_form'] = MailingFilterForm(self.request.GET)
-        return context
+
+class ClientUpdateView(LoginRequiredMixin, UpdateView):
+    model = Client
+    form_class = ClientForm
+    success_url = reverse_lazy('mailing_service:client_list')
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 
-class MailingUpdateView(LoginRequiredMixin, UpdateView):
-    pass
+class MailingMessageUpdateView(LoginRequiredMixin, UpdateView):
+    model = MailingMessage
+    form_class = MailingMessageForm
+    success_url = reverse_lazy('mailing_service:mail_list')
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 
 # delete ----------------------------------------------------------------
@@ -108,6 +126,7 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
 
 class MailingDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = MailingSettings
+    template_name = 'mailing_service/confirm_delete.html'
     success_url = reverse_lazy('mailing_service:cabinet')
 
     def test_func(self):
@@ -116,7 +135,8 @@ class MailingDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 class ClientDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Client
-    success_url = reverse_lazy('mailing_service:cabinet')
+    template_name = 'mailing_service/confirm_delete.html'
+    success_url = reverse_lazy('mailing_service:client_list')
 
     def test_func(self):
         return self.request.user == self.get_object().owner
@@ -124,7 +144,8 @@ class ClientDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 class MailingMessageDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = MailingSettings
-    success_url = reverse_lazy('mailing_service:cabinet')
+    template_name = 'mailing_service/confirm_delete.html'
+    success_url = reverse_lazy('mailing_service:mail_list')
 
     def test_func(self):
         return self.request.user == self.get_object().owner
