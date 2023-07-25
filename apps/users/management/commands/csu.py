@@ -13,7 +13,6 @@ class Command(BaseCommand):
             is_superuser=True,
             is_verified=True
         )
-
         user.set_password('111')
         user.save()
 
@@ -22,7 +21,6 @@ class Command(BaseCommand):
             email='test1@test.ru',
             is_verified=True
         )
-
         user.set_password('2222')
         user.save()
 
@@ -30,6 +28,5 @@ class Command(BaseCommand):
             email='test2@test.ru',
             is_verified=True
         )
-
         user.set_password('3333')
         user.save()

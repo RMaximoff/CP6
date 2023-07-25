@@ -1,51 +1,34 @@
-{% extends 'mailing_service/cabinet.html' %}
-{% block obj_list %}
-    <div class="card-body">
-        <form method="get">
-            <label for="status">Фильтр по статусу:</label>
-            {% csrf_token %}
-            {{ filter_form }}
-            <button type="submit">Применить</button>
-        </form>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Название</th>
-                    <th>Статус рассылки</th>
-                    <th>Старт рассылки</th>
-                    <th>Финиш рассылки</th>
-                    <th>Периодичность рассылки</th>
-                    <th>Действие</th>
-                    <th>Логи отправки</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for mailing in mailing_list %}
-                    <tr>
-                        <td><a href="{% url 'mailing_service:mailing_log_detail' mailing.id %}">{{ mailing.title }}</a></td>
-                        <td>{{ mailing.get_mailing_status_display }}</td>
-                        <td>{{ mailing.mailing_start_time }}</td>
-                        <td>{{ mailing.mailing_end_time }}</td>
-                        <td>{{ mailing.get_mailing_period_display }}</td>
-                        <td>
-                            <form method="post" action="{% url 'mailing_service:update_status' mailing.pk %}">
-                                {% csrf_token %}
-                                {% if mailing.mailing_status == 'created' or mailing.mailing_status == 'paused' %}
-                                    <input type="hidden" name="new_status" value="started">
-                                    <button type="submit">Активировать</button>
-                                {% elif mailing.mailing_status == 'started' %}
-                                    <input type="hidden" name="new_status" value="paused">
-                                    <button type="submit">Деактивировать</button>
-                                {% endif %}
-                            </form>
-                        </td>
-                        <td>
-                            <a class="btn btn-outline-primary" href="{% url "mailing_service:mailing_log_detail" mailing.clients.pk %}">Логи</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
 
-{% endblock %}
+
+<div class="card-body">
+    <form method="get">
+        <label for="status">Фильтр по статусу:</label>
+        {% csrf_token %}
+        {{ filter_form }}
+        <button type="submit">Применить</button>
+    </form>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Статус рассылки</th>
+                <th>Старт рассылки</th>
+                <th>Финиш рассылки</th>
+                <th>Периодичность рассылки</th>
+                <th>Логи отправки</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mailing in mailing_list %}
+                <tr>
+                    <td>{{ mailing.title }}</td>
+                    <td>{{ mailing.get_mailing_status_display }}</td>
+                    <td>{{ mailing.mailing_start_time }}</td>
+                    <td>{{ mailing.mailing_end_time }}</td>
+                    <td>{{ mailing.get_mailing_period_display }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+

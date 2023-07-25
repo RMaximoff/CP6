@@ -45,7 +45,7 @@ class MailingSettings(models.Model):
     )
 
     title = models.CharField(max_length=50, verbose_name='Название')
-    mailing_start_time = models.DateTimeField(**NULLABLE, verbose_name='Старт рассылки')
+    mailing_start_time = models.DateTimeField(**NULLABLE, verbose_name='Дата рассылки')
     mailing_end_time = models.DateTimeField(**NULLABLE, verbose_name='Финиш рассылки')
     mailing_period = models.CharField(max_length=10, choices=FREQUENCY_CHOICES, verbose_name='Периодичность рассылки')
     mailing_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='created')
@@ -70,7 +70,7 @@ class MailingLog(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=15, choices=MAILING_STATUS)
     server_response = models.TextField(blank=True, null=True)
-    client = models.ForeignKey(Client, on_delete=models.SET_NULL, **NULLABLE)
+    mailing = models.ForeignKey(Client, on_delete=models.SET_NULL, **NULLABLE)
 
     def __str__(self):
         return f"{self.get_status_display()} ({self.timestamp})"

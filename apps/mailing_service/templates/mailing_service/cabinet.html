@@ -16,18 +16,14 @@
                                 <a class="btn btn-outline-primary" href="{% url "mailing_service:client_create" %}">Добавить клиента</a>
                             </div>
 
-                            {% block obj_list %}
-                            {% endblock %}
+                            {% include 'mailing_service/mailingsettings_list.html' %}
 
                         </div>
                         <div class="col-md-3 text-center">
                             <div class="card-body" style="text-align: center">
                                 <h4>Профиль</h4>
                             </div>
-                            <div class="card-body" style="text-align: center">
-                                {% block profile %}
-                                {% endblock %}
-                            </div>
+                            {% include 'mailing_service/profile.html' %}
                         </div>
                     </div>
                 </div>
