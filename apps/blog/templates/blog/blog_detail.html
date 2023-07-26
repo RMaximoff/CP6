@@ -1,0 +1,26 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+{% load catalog_tags %}
+
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-xxl-50">
+                <div class="card mb-4 box-shadow">
+                    <div class="card-header d-flex align-items-center justify-content-center" style="height: 100px">
+                      <h4 class="my-0 font-weight-normal">{{ object.title }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-center">Просмотров {{ object.count_views }}</p>
+                        <img src="{{ object.image|mediapath }}" alt="Превью картинки" style="max-width: 100%; width: 600px; height: 600px">
+                        <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                            <p class="text-center">{{ object.content }}</p>
+                        </ul>
+                        <a href="{% url 'blog_update' slug=object.slug %}" class="btn btn-primary">Редактировать</a>
+                        <a href="{% url 'blog_delete' slug=object.slug %}" class="btn btn-primary">Удалить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

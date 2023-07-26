@@ -1,0 +1,24 @@
+{% extends 'mailing_service/base.html' %}
+{% block content %}
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Тема</th>
+                <th>Текст</th>
+                <th></th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for mail in mail_list %}
+                <tr>
+                    <td><a href="{% url 'mailing_service:client_upd' mail.pk %}">{{ mail.subject }}</a></td>
+                    <td>{{ mail.body }}</td>
+                    <td><a href="{% url 'mailing_service:mail_del' mail.pk %}" class="btn btn-primary">Удалить</a></td>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

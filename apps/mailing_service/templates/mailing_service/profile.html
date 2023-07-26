@@ -1,0 +1,8 @@
+
+
+    <div class="card">
+        <p>Cоздано рассылок: {{ count_mailing_all }}</p>
+        <p>Aктивных рассылок: {{ count_mailing_active }}</p>
+        <p><a href="{% url "mailing_service:mail_list" %}">Cоздано сообщений: {{ count_mail_massage }}</a></p>
+        <p><a href="{% url "mailing_service:client_list" %}">Добавлено клиентов: {{ count_clients }}</a></p>
+    </div>

@@ -1,0 +1,25 @@
+{% extends 'mailing_service/base.html' %}
+{% block content %}
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Почта</th>
+                <th>Ответ сервера</th>
+                <th>Результат</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in mailing_log_list %}
+                <tr>
+                    <td>{{ log.timestamp }}</td>
+                    <td>{{ log.client }}</td>
+                    <td>{{ log.server_response }}</td>
+                    <td>{{ log.status }}</td>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

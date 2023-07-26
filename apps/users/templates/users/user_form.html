@@ -1,0 +1,20 @@
+{% extends 'mailing_service/base.html' %}
+{% block content %}
+
+
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-3"></div>
+                <div class="card mb-4 box-shadow">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <a type="button" class="btn btn-primary" href="{% url 'users:reset_password' %}">Создать новый пароль</a>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <a href="{% url 'mailing_service:home' %}" class="btn btn-primary">Назад</a>
+                    </form>
+                </div>
+        </div>
+    </div>
+
+{% endblock %}
