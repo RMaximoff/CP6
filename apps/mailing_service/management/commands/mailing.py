@@ -2,6 +2,7 @@ import time
 import schedule
 from django.core.management import BaseCommand
 
+
 from apps.mailing_service.services import job
 
 

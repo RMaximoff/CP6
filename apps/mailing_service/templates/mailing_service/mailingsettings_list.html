@@ -17,6 +17,7 @@
                 <th>Периодичность рассылки</th>
                 <th>Логи отправки</th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -27,6 +28,7 @@
                     <td>{{ mailing.mailing_start_time }}</td>
                     <td>{{ mailing.mailing_end_time }}</td>
                     <td>{{ mailing.get_mailing_period_display }}</td>
+                    <td><a href="{% url "mailing_service:mailing_log" %}" class="btn btn-outline-primary">Логи</a></td>
                     <td><a href="{% url 'mailing_service:mailing_del' mailing.pk %}" class="btn btn-primary">Удалить</a></td>
                 </tr>
             {% endfor %}

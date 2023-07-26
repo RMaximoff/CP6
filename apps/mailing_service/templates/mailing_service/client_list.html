@@ -13,7 +13,7 @@
         <tbody>
             {% for client in client_list %}
                 <tr>
-                    <td>{{ client.email }}</td>
+                    <td><a href="{% url 'mailing_service:client_upd' client.pk %}">{{ client.email }}</a></td>
                     <td>{{ client.full_name }}</td>
                     <td>{{ client.comment }}</td>
                     <td><a href="{% url 'mailing_service:client_del' client.pk %}" class="btn btn-primary">Удалить</a></td>

@@ -13,7 +13,7 @@
         <tbody>
             {% for mail in mail_list %}
                 <tr>
-                    <td>{{ mail.subject }}</td>
+                    <td><a href="{% url 'mailing_service:client_upd' mail.pk %}">{{ mail.subject }}</a></td>
                     <td>{{ mail.body }}</td>
                     <td><a href="{% url 'mailing_service:mail_del' mail.pk %}" class="btn btn-primary">Удалить</a></td>
             {% endfor %}

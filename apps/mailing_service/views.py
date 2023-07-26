@@ -6,6 +6,7 @@ from django.views.generic import View, ListView, DetailView, UpdateView, CreateV
 from apps.blog.models import Blog
 from apps.mailing_service.forms import MailingSettingsForm, MailingMessageForm, ClientForm, MailingFilterForm
 from apps.mailing_service.models import MailingSettings, Client, MailingMessage, MailingLog
+from apps.mailing_service.services import mailing_cache
 
 
 # create ----------------------------------------------------------------
@@ -14,6 +15,7 @@ from apps.mailing_service.models import MailingSettings, Client, MailingMessage,
 class MailingCreateView(CreateView):
     model = MailingSettings
     form_class = MailingSettingsForm
+    template_name = 'mailing_service/mailing_form.html'
     success_url = reverse_lazy('mailing_service:cabinet')
 
     def form_valid(self, form):
@@ -24,6 +26,7 @@ class MailingCreateView(CreateView):
 class ClientCreateView(CreateView):
     model = Client
     form_class = ClientForm
+    template_name = 'mailing_service/mailing_form.html'
     success_url = reverse_lazy('mailing_service:cabinet')
 
     def form_valid(self, form):
@@ -34,6 +37,7 @@ class ClientCreateView(CreateView):
 class MailingMessageCreate(CreateView):
     model = MailingMessage
     form_class = MailingMessageForm
+    template_name = 'mailing_service/mailing_form.html'
     success_url = reverse_lazy('mailing_service:cabinet')
 
     def form_valid(self, form):
@@ -51,9 +55,10 @@ class MailingListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = MailingSettings.objects.filter(owner_id=self.request.user.pk)
+        owner_id = self.request.user.pk
         state = self.request.GET.get('status')
         if self.request.GET.get('status'):
-            queryset = queryset.filter(mailing_status=state)
+            queryset = mailing_cache(owner_id).filter(mailing_status=state)
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -87,6 +92,10 @@ class MailingLogListView(LoginRequiredMixin, ListView):
     template_name = 'mailing_service/mailinglog_list.html'
     context_object_name = 'mailing_log_list'
 
+    def get_queryset(self):
+        queryset = MailingMessage.objects.filter(owner_id=self.request.user.pk)
+        return queryset
+
 
 # update ----------------------------------------------------------------
 
@@ -94,6 +103,7 @@ class MailingLogListView(LoginRequiredMixin, ListView):
 class MailingUpdateView(LoginRequiredMixin, UpdateView):
     model = MailingSettings
     form_class = MailingSettingsForm
+    template_name = 'mailing_service/mailing_form.html'
     success_url = reverse_lazy('mailing_service:cabinet')
 
     def form_valid(self, form):
@@ -104,6 +114,7 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
 class ClientUpdateView(LoginRequiredMixin, UpdateView):
     model = Client
     form_class = ClientForm
+    template_name = 'mailing_service/mailing_form.html'
     success_url = reverse_lazy('mailing_service:client_list')
 
     def form_valid(self, form):
@@ -114,6 +125,7 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
 class MailingMessageUpdateView(LoginRequiredMixin, UpdateView):
     model = MailingMessage
     form_class = MailingMessageForm
+    template_name = 'mailing_service/mailing_form.html'
     success_url = reverse_lazy('mailing_service:mail_list')
 
     def form_valid(self, form):

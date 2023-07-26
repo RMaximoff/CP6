@@ -12,7 +12,7 @@ app_name = 'mailing_service'
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
-    path('cabinet/', CabinetView.as_view(), name="cabinet"),
+    path('cabinet/', cache_page(60)(CabinetView.as_view()), name="cabinet"),
     path('profile/', ProfileDataView.as_view(), name="profile"),
 
     path('mailing/', MailingCreateView.as_view(), name='mailing_create'),
@@ -26,6 +26,7 @@ urlpatterns = [
     path('mailing-list/', MailingListView.as_view(), name="profile_data"),
     path('client-list/', ClientListView.as_view(), name='client_list'),
     path('mail-list/', MailMessageListView.as_view(), name='mail_list'),
+    path('mailing-log/', MailingLogListView.as_view(), name='mailing_log'),
 
     path('mailing-del/<int:pk>', MailingDeleteView.as_view(), name='mailing_del'),
     path('client-del/<int:pk>', ClientDeleteView.as_view(), name='client_del'),

@@ -40,8 +40,7 @@ class MailingSettings(models.Model):
     STATUS_CHOICES = (
         ('completed', 'Завершена'),
         ('created', 'Создана'),
-        ('started', 'Запущена'),
-        ('paused', 'Приостановлена')
+        ('started', 'Запущена')
     )
 
     title = models.CharField(max_length=50, verbose_name='Название')
@@ -50,7 +49,7 @@ class MailingSettings(models.Model):
     mailing_period = models.CharField(max_length=10, choices=FREQUENCY_CHOICES, verbose_name='Периодичность рассылки')
     mailing_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='created')
     mail = models.ForeignKey(MailingMessage, on_delete=models.CASCADE, verbose_name='Сообщение')
-    clients = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='Клиенты')
+    clients = models.ManyToManyField(Client, verbose_name='Клиенты')
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, **NULLABLE)
 
     def __str__(self):
