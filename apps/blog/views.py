@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
@@ -9,6 +10,7 @@ from apps.blog.models import Blog
 
 class BlogListView(ListView):
     model = Blog
+    context_object_name = 'post_list'
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -16,14 +18,17 @@ class BlogListView(ListView):
         return queryset
 
 
-class PostCreateView(CreateView):
+class PostCreateView(PermissionRequiredMixin, CreateView):
     model = Blog
     form_class = BlogForm
-    success_url = reverse_lazy('blog:blog_detail')
+    permission_required = 'app.blog.add_blog'
 
     def form_valid(self, form):
         response = super().form_valid(form)
         return response
+
+    def get_success_url(self):
+        return reverse('blog:blog_detail', kwargs={'slug': self.object.slug})
 
 
 class PostUpdateView(UpdateView):

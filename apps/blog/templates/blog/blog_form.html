@@ -11,7 +11,7 @@
                         {% csrf_token %}
                         {{ form.as_p }}
                         <button type="submit" class="btn btn-primary">Сохранить</button>
-                        <a href="{% url 'blog_list' %}" class="btn btn-primary">Назад</a>
+                        <a href="{% url 'blog:blog_list' %}" class="btn btn-primary">Назад</a>
                     </form>
                 </div>
             </div>
