@@ -1,19 +1,6 @@
-{% extends 'catalog/base.html' %}
+{% extends 'mailing_service/base.html' %}
 {% block content %}
-{% load catalog_tags %}
 
-    <style>
-    .card {
-        background-color: #222022;
-    }
-    form {
-        color: white;
-    }
-    form input[type="text"],
-    form textarea {
-        width: 100%;
-    }
-    </style>
 
     <div class="container">
         <div class="row text-center">
@@ -23,7 +10,7 @@
                         {% csrf_token %}
                         Удаляем?
                         <input type='submit' class="btn btn-danger" value="Да">
-                        <a href="{% url 'catalog:blog_list' %}" class="btn btn-primary">Назад</a>
+                        <a href="{% url 'blog:blog_list' %}" class="btn btn-primary">Назад</a>
                     </form>
                 </div>
             </div>
