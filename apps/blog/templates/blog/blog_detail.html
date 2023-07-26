@@ -1,6 +1,6 @@
-{% extends 'catalog/base.html' %}
+{% extends 'mailing_service/base.html' %}
 {% block content %}
-{% load catalog_tags %}
+{% load mailing_tag %}
 
     <div class="container">
         <div class="row text-center">
@@ -15,8 +15,8 @@
                         <ul class="list-unstyled mt-3 mb-4 text-start m-3">
                             <p class="text-center">{{ object.content }}</p>
                         </ul>
-                        <a href="{% url 'blog_update' slug=object.slug %}" class="btn btn-primary">Редактировать</a>
-                        <a href="{% url 'blog_delete' slug=object.slug %}" class="btn btn-primary">Удалить</a>
+                        <a href="{% url 'blog:blog_update' slug=object.slug %}" class="btn btn-primary">Редактировать</a>
+                        <a href="{% url 'blog:blog_delete' slug=object.slug %}" class="btn btn-primary">Удалить</a>
                     </div>
                 </div>
             </div>
