@@ -70,7 +70,8 @@ class MailingLog(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=15, choices=MAILING_STATUS)
     server_response = models.TextField(blank=True, null=True)
-    mailing = models.ForeignKey(Client, on_delete=models.SET_NULL, **NULLABLE)
+    client = models.ForeignKey(Client, on_delete=models.SET_NULL, **NULLABLE)
+    mailing = models.ForeignKey(MailingSettings, on_delete=models.SET_NULL, **NULLABLE)
 
     def __str__(self):
         return f"{self.get_status_display()} ({self.timestamp})"
