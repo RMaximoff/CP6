@@ -1,0 +1,37 @@
+{% extends 'mailing_service/base.html' %}
+{% block content %}
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID пользователя</th>
+                <th>Почта</th>
+                <th>Почта подтверждена</th>
+                <th></th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users_list %}
+                <tr>
+                    <td>{{ user.pk }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.is_verified }}</td>
+                    <td>
+                        <form method="post" action="{% url 'users:users_off' user.pk %}">
+                            {% csrf_token %}
+                            {% if not user.is_active %}
+                                <input type="hidden" name="new_status" value="True">
+                                <button type="submit">Активировать</button>
+                            {% elif mailing.mailing_status != 'off' %}
+                                <input type="hidden" name="new_status" value="False">
+                                <button type="submit">Деактивировать</button>
+                            {% endif %}
+                        </form>
+                    </td>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

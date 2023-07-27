@@ -11,18 +11,6 @@ from config.settings import CACHE_ENABLED
 logging.basicConfig(level=logging.INFO)
 
 
-def mailing_cache(owner_id):
-    if CACHE_ENABLED:
-        key = f'mailing_settings_list_{owner_id}'
-        mailing_settings_list = cache.get(key)
-        if mailing_settings_list is None:
-            mailing_settings_list = MailingSettings.objects.filter(owner_id=owner_id)
-            cache.set(key, mailing_settings_list)
-    else:
-        mailing_settings_list = MailingSettings.objects.filter(owner_id=owner_id)
-    return mailing_settings_list
-
-
 def send_mailing(mailing_id):
     """Отправка письма клиенту"""
     mailing = MailingSettings.objects.get(pk=mailing_id)

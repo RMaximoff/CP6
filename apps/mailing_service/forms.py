@@ -21,14 +21,15 @@ class MailingMessageForm(FormMixin, forms.ModelForm):
         exclude = ('owner',)
 
 
-class MailingSettingsForm(FormMixin, forms.ModelForm):
-    clients = forms.ModelMultipleChoiceField(queryset=Client.objects.all(), widget=forms.CheckboxSelectMultiple,
-                                             label='Клиенты')
+class MailingSettingsForm(forms.ModelForm):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['mailing_start_time'].widget = DateInput(attrs={'type': 'datetime-local'})
         self.fields['mailing_end_time'].widget = DateInput(attrs={'type': 'datetime-local'})
+        self.user = user
+        self.fields['clients'].queryset = Client.objects.filter(owner=self.user)
+        self.fields['mail'].queryset = MailingMessage.objects.filter(owner=self.user)
 
     class Meta:
         model = MailingSettings

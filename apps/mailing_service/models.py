@@ -40,7 +40,8 @@ class MailingSettings(models.Model):
     STATUS_CHOICES = (
         ('completed', 'Завершена'),
         ('created', 'Создана'),
-        ('started', 'Запущена')
+        ('started', 'Запущена'),
+        ('off', 'Отключена модератором')
     )
 
     title = models.CharField(max_length=50, verbose_name='Название')

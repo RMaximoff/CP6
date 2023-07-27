@@ -1,6 +1,7 @@
 import string
 import random
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
@@ -73,3 +74,26 @@ class UserPasswordResetView(View):
             user.set_password(password)
             user.save()
         return redirect('users:login')
+
+
+class UsersListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = User
+    context_object_name = 'users_list'
+    template_name = 'users/users_list.html'
+
+    def test_func(self):
+        return self.request.user.groups.filter(name='moderators').exists()
+
+
+class UserStatusUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
+
+    def post(self, request, *args, **kwargs):
+        mailing_id = kwargs['pk']
+        new_status = request.POST.get('new_status')
+        mailing = User.objects.get(pk=mailing_id)
+        mailing.is_active = new_status
+        mailing.save()
+        return redirect('users:users_list')
+
+    def test_func(self):
+        return self.request.user.groups.filter(name='moderators').exists()

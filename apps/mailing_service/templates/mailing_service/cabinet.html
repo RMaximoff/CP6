@@ -1,4 +1,5 @@
 {% extends 'mailing_service/base.html' %}
+{% load mailing_tag %}
 {% block content %}
 
     <div class="py-5">
@@ -10,21 +11,25 @@
                             <div class="card-body" style="text-align: center">
                                 <h4>Список рассылок</h4>
                             </div>
-                            <div class="d-flex justify-content-center">
-                                <a class="btn btn-outline-primary" href="{% url "mailing_service:mailing_create" %}">Добавить рассылку</a>
-                                <a class="btn btn-outline-primary" href="{% url "mailing_service:mail_create" %}">Добавить сообщение</a>
-                                <a class="btn btn-outline-primary" href="{% url "mailing_service:client_create" %}">Добавить клиента</a>
-                            </div>
+                            {% if not user|is_moderator %}
+                                <div class="d-flex justify-content-center">
+                                    <a class="btn btn-outline-primary" href="{% url "mailing_service:mailing_create" %}">Добавить рассылку</a>
+                                    <a class="btn btn-outline-primary" href="{% url "mailing_service:mail_create" %}">Добавить сообщение</a>
+                                    <a class="btn btn-outline-primary" href="{% url "mailing_service:client_create" %}">Добавить клиента</a>
+                                </div>
+                            {% endif %}
 
                             {% include 'mailing_service/mailingsettings_list.html' %}
 
-                        </div>
-                        <div class="col-md-3 text-center">
-                            <div class="card-body" style="text-align: center">
-                                <h4>Профиль</h4>
+                        {% if not user|is_moderator %}
                             </div>
-                            {% include 'mailing_service/profile.html' %}
-                        </div>
+                            <div class="col-md-3 text-center">
+                                <div class="card-body" style="text-align: center">
+                                    <h4>Профиль</h4>
+                                </div>
+                                {% include 'mailing_service/profile.html' %}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

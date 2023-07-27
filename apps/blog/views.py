@@ -28,7 +28,7 @@ class PostCreateView(PermissionRequiredMixin, CreateView):
         return response
 
     def get_success_url(self):
-        return reverse('blog:blog_detail', kwargs={'slug': self.object.slug})
+        return reverse('blog:blog_detail')
 
 
 class PostUpdateView(UpdateView):
@@ -40,15 +40,15 @@ class PostUpdateView(UpdateView):
         return response
 
     def get_success_url(self):
-        return reverse('blog:blog_detail', kwargs={'slug': self.object.slug})
+        return reverse('blog:blog_detail')
 
 
 class PostView(DetailView):
     model = Blog
-    slug_url_kwarg = 'slug'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
+
         self.object.count_views += 1
         self.object.save()
         return context

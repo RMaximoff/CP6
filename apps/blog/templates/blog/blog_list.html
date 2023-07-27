@@ -15,7 +15,7 @@
                         <div class="row">
                             {% for el in post_list %}
                                 <div class="col-3 mt-4">
-                                    <a href="/blog/{{el.slug}}" style="text-decoration: none; color: black">
+                                    <a href="{% url "blog:blog_detail" el.pk %}" style="text-decoration: none; color: black">
                                         <div class="card mb-4 box-shadow">
                                             <div class="card-header d-flex align-items-center justify-content-center" style="height: 100px">
                                               <h4 class="my-0 font-weight-normal">{{ el.title }}</h4>
