@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from apps.blog.models import Blog
+
+
+@admin.register(Blog)
+class BlogAdmin(admin.ModelAdmin):
+    list_display = ('create_date', 'title', 'is_published')

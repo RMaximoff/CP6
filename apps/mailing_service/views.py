@@ -1,12 +1,12 @@
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import View, ListView, DetailView, UpdateView, CreateView, TemplateView, DeleteView
 from apps.blog.models import Blog
 from apps.mailing_service.forms import MailingSettingsForm, MailingMessageForm, ClientForm, MailingFilterForm
 from apps.mailing_service.models import MailingSettings, Client, MailingMessage, MailingLog
-from apps.mailing_service.services import mailing_cache
 
 
 # create ----------------------------------------------------------------
@@ -17,6 +17,11 @@ class MailingCreateView(CreateView):
     form_class = MailingSettingsForm
     template_name = 'mailing_service/mailing_form.html'
     success_url = reverse_lazy('mailing_service:cabinet')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
@@ -54,11 +59,15 @@ class MailingListView(LoginRequiredMixin, ListView):
     context_object_name = 'mailing_list'
 
     def get_queryset(self):
-        queryset = MailingSettings.objects.filter(owner_id=self.request.user.pk)
+        if self.request.user.groups.filter(name='moderators'):
+            queryset = MailingSettings.objects.all()
+        else:
+            queryset = MailingSettings.objects.filter(owner_id=self.request.user.pk)
+
         owner_id = self.request.user.pk
         state = self.request.GET.get('status')
         if self.request.GET.get('status'):
-            queryset = mailing_cache(owner_id).filter(mailing_status=state)
+            queryset = MailingSettings.objects.filter(owner_id=owner_id)
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -73,7 +82,10 @@ class ClientListView(LoginRequiredMixin, ListView):
     context_object_name = 'client_list'
 
     def get_queryset(self):
-        queryset = Client.objects.filter(owner_id=self.request.user.pk)
+        if self.request.user.groups.filter(name='moderators'):
+            queryset = Client.objects.all()
+        else:
+            queryset = Client.objects.filter(owner_id=self.request.user.pk)
         return queryset
 
 
@@ -83,7 +95,10 @@ class MailMessageListView(LoginRequiredMixin, ListView):
     context_object_name = 'mail_list'
 
     def get_queryset(self):
-        queryset = MailingMessage.objects.filter(owner_id=self.request.user.pk)
+        if self.request.user.groups.filter(name='moderators'):
+            queryset = MailingMessage.objects.all()
+        else:
+            queryset = MailingMessage.objects.filter(owner_id=self.request.user.pk)
         return queryset
 
 
@@ -93,14 +108,16 @@ class MailingLogListView(LoginRequiredMixin, ListView):
     context_object_name = 'mailing_log_list'
 
     def get_queryset(self):
-        queryset = MailingMessage.objects.filter(owner_id=self.request.user.pk)
+        mailing_pk = self.kwargs.get('mailing_pk')
+        mailing_settings = get_object_or_404(MailingSettings, pk=mailing_pk)
+        queryset = MailingLog.objects.filter(mailing=mailing_settings)
         return queryset
 
 
 # update ----------------------------------------------------------------
 
 
-class MailingUpdateView(LoginRequiredMixin, UpdateView):
+class MailingUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = MailingSettings
     form_class = MailingSettingsForm
     template_name = 'mailing_service/mailing_form.html'
@@ -110,8 +127,11 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
         form.instance.owner = self.request.user
         return super().form_valid(form)
 
+    def test_func(self):
+        return self.request.user == self.get_object().owner
 
-class ClientUpdateView(LoginRequiredMixin, UpdateView):
+
+class ClientUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Client
     form_class = ClientForm
     template_name = 'mailing_service/mailing_form.html'
@@ -121,8 +141,11 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
         form.instance.owner = self.request.user
         return super().form_valid(form)
 
+    def test_func(self):
+        return self.request.user == self.get_object().owner
 
-class MailingMessageUpdateView(LoginRequiredMixin, UpdateView):
+
+class MailingMessageUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = MailingMessage
     form_class = MailingMessageForm
     template_name = 'mailing_service/mailing_form.html'
@@ -132,6 +155,8 @@ class MailingMessageUpdateView(LoginRequiredMixin, UpdateView):
         form.instance.owner = self.request.user
         return super().form_valid(form)
 
+    def test_func(self):
+        return self.request.user == self.get_object().owner
 
 # delete ----------------------------------------------------------------
 
@@ -175,6 +200,7 @@ class HomeView(TemplateView):
         context_data['count_mail_active'] = MailingSettings.objects.filter(mailing_status__in=['started']).count()
         context_data['count_clients'] = Client.objects.distinct().count()
         context_data['blog'] = Blog.objects.filter(is_published=True).order_by('?')[:3]
+        context_data['user'] = self.request.user
         return context_data
 
 
@@ -215,5 +241,26 @@ class CabinetView(TemplateView):
 
         return render(request, self.template_name, combined_context)
 
+
+class ModeratorViews(UserPassesTestMixin, TemplateView):
+    template_name = 'mailing_service/moderators.html'
+
+    def test_func(self):
+        return self.request.user.groups.filter(name='moderators').exists()
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        return context_data
+
+
+class MailingStatusUpdateView(View):
+    def post(self, request, *args, **kwargs):
+        mailing_id = kwargs['pk']
+        new_status = request.POST.get('new_status')
+        mailing = MailingSettings.objects.get(pk=mailing_id)
+        mailing.mailing_status = new_status
+        mailing.save()
+
+        return redirect('mailing_service:cabinet')
 
 
